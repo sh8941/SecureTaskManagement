@@ -9,11 +9,17 @@ import java.time.LocalDateTime;
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long userId;
+    @Column(name = "username")
     private String username;
+    @Column(name = "password")
     private String password;
+    @Column(name = "email")
     private String email;
+    @Column(name = "role_id")
     private Long roleId;
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     public Long getUserId() {
@@ -61,6 +67,6 @@ public class UserEntity {
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+        this.createdAt = LocalDateTime.now();
     }
 }
