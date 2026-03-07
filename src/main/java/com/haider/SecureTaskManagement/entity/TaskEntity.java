@@ -16,13 +16,15 @@ public class TaskEntity {
     String title;
     String description;
     LocalDateTime dueDate;
+    @Enumerated(EnumType.STRING)
     Priority priority;
+    @Enumerated(EnumType.STRING)
     Status status;
 
     // who created
     @ManyToOne
-    @JoinColumn(name = "crated_by")
-    UserEntity cratedBy;
+    @JoinColumn(name = "created_by")
+    UserEntity createdBy;
 
     // assigned to
     @ManyToOne
@@ -87,12 +89,12 @@ public class TaskEntity {
         this.status = status;
     }
 
-    public UserEntity getCratedBy() {
-        return cratedBy;
+    public UserEntity getCreatedBy() {
+        return createdBy;
     }
 
-    public void setCratedBy(UserEntity cratedBy) {
-        this.cratedBy = cratedBy;
+    public void setCreatedBy(UserEntity createdBy) {
+        this.createdBy = createdBy;
     }
 
     public UserEntity getAssignedTo() {
