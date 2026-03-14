@@ -1,12 +1,17 @@
 package com.haider.SecureTaskManagement.entity;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class UserEntity {
+public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -17,10 +22,12 @@ public class UserEntity {
     private String password;
     @Column(name = "email")
     private String email;
-    @Column(name = "role_id")
-    private Long roleId;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private RoleEntity role;
 
     public Long getUserId() {
         return userId;
@@ -36,6 +43,11 @@ public class UserEntity {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
     }
 
     public String getPassword() {
@@ -54,16 +66,17 @@ public class UserEntity {
         this.email = email;
     }
 
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public RoleEntity getRole() {
+        return role;
+    }
+
+    public void setRole(RoleEntity role) {
+        this.role = role;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {

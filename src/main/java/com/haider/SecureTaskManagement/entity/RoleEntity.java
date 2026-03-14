@@ -26,6 +26,6 @@ public class RoleEntity {
     }
 
     public void setRoleName(String roleName) {
-        this.roleName = roleName;
+        roleName = roleName;
     }
 }
