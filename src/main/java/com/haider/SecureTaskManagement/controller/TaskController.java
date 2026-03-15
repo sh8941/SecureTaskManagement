@@ -6,6 +6,8 @@ import com.haider.SecureTaskManagement.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/task")
 public class TaskController {
@@ -20,5 +22,10 @@ public class TaskController {
     @GetMapping("/{id}")
     public TaskEntity getTask(@PathVariable Long id) {
         return taskService.getTask(id);
+    }
+
+    @GetMapping("/mytask")
+    public List<TaskEntity> getMyTasks() {
+        return taskService.getMyTask();
     }
 }

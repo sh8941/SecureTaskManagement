@@ -1,5 +1,6 @@
 package com.haider.SecureTaskManagement.service;
 
+import com.haider.SecureTaskManagement.config.SecurityUtils;
 import com.haider.SecureTaskManagement.dto.TaskCreateRequestDto;
 import com.haider.SecureTaskManagement.entity.TaskEntity;
 import com.haider.SecureTaskManagement.entity.UserEntity;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TaskService {
@@ -16,6 +18,9 @@ public class TaskService {
     private TaskRepo taskRepo;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private SecurityUtils securityUtils;
+
 
     public TaskEntity getTask(Long id) {
         return taskRepo.getTaskByTaskId(id).get();
@@ -30,6 +35,12 @@ public class TaskService {
         taskEntity.setStatus(dto.getStatus());
         taskEntity.setVisibility(dto.getVisibility());
 
+        // fetch creator and add creator
+        String currentUsername = securityUtils.getCurrentUsername();
+        UserEntity creator = userRepo.findByUsername(currentUsername).get();
+        taskEntity.setCreatedBy(creator);
+
+        // fetch assigned user
         UserEntity assignedUser = userRepo.findByUserId(dto.getAssignedToUserId()).orElseThrow();
         taskEntity.setAssignedTo(assignedUser);
 
@@ -39,5 +50,11 @@ public class TaskService {
 
         return taskRepo.save(taskEntity);
 
+    }
+
+    public List<TaskEntity> getMyTask() {
+        String username = securityUtils.getCurrentUsername();
+        UserEntity user = userRepo.findByUsername(username).orElseThrow();
+        return taskRepo.getTasksByCreatedBy(user);
     }
 }
