@@ -1,326 +1,350 @@
-# 🔐 SecureTaskManagement API
+# 🔐 SecureTaskManagement
 
-A **Spring Boot backend project** that demonstrates secure task management with authentication, authorization, role-based access control, and audit logging.
-
-This project simulates a **team task management platform** where users can:
-
-* Create and manage tasks
-* Assign tasks to other users
-* Collaborate through comments
-* Track activities securely via audit logs
-
-The system is designed to showcase **enterprise-level backend architecture** using Spring Boot and Spring Security.
+**SecureTaskManagement** is a production-ready backend application built using Spring Boot that provides a secure and scalable task management system. It demonstrates industry-level practices such as JWT authentication, role-based authorization, rate limiting, caching, filtering, and pagination.
 
 ---
 
 ## 🚀 Features
 
-### 🔐 Security & Access Control
+* 🔐 **JWT Authentication & Authorization**
 
-* JWT-based Authentication
-* Role-Based Access Control (RBAC)
-* Method-level security using `@PreAuthorize`
-* Fine-grained authorization (ownership & assignment based access)
+    * Secure login/signup using JWT
+    * Role-based and resource-level access control
 
----
+* 👥 **User & Role Management**
 
-### 📋 Task Management
+    * Role-based permissions (Admin/User)
+    * Secure user operations
 
-* Task creation, update, and deletion (Soft Delete)
-* Task assignment to users
-* Task priority & workflow status
-* Task visibility control (public/private)
+* ✅ **Task Management**
 
----
+    * Create, update, delete, and fetch tasks
+    * Task visibility and prioritization
 
-### 💬 Collaboration
+* 💬 **Task Comments**
 
-* Add comments to tasks
-* Secure comment visibility based on access rules
+    * Add and manage comments on tasks
+    * Ownership-based authorization
 
----
+* ⚡ **Rate Limiting**
 
-### 📊 Audit & Tracking
+    * Implemented using Redis to prevent abuse
 
-* Audit logging for user actions
-* Tracks entity changes for security and traceability
+* 🧠 **Caching with Redis**
 
----
+    * Improves performance and reduces DB load
 
-### ⚙️ Backend Design
+* 🔍 **Filtering & Pagination**
 
-* RESTful API architecture
-* DTO-based request/response handling
-* Centralized exception handling
-* Input validation using Jakarta Validation
-* Clean layered architecture
+    * Dynamic filtering using Specifications
+    * Paginated API responses
 
----
+* 📄 **API Documentation**
 
-## 🛠 Tech Stack
+    * Swagger/OpenAPI integration
 
-* **Java 17**
-* **Spring Boot**
-* **Spring Security**
-* **JWT Authentication**
-* **Spring Data JPA**
-* **Hibernate**
-* **MySQL / H2**
-* **MapStruct (for DTO mapping)**
-* **Maven**
+* 🐳 **Docker Support**
+
+    * Easy containerized deployment
 
 ---
 
-## 📁 Project Folder Structure
+## 🛠️ Tech Stack
+
+* **Backend:** Spring Boot, Spring Security
+* **Database:** MySQL
+* **Caching & Rate Limiting:** Redis
+* **Authentication:** JWT
+* **ORM:** Spring Data JPA (Hibernate)
+* **Documentation:** Swagger (OpenAPI)
+* **Containerization:** Docker
+
+---
+
+## 📁 Project Structure
+
+### 🔐 Authorization
+
+* `AuthorizationService` – Central authorization logic
+* `CommentAuthorization` – Access control for comments
+* `TaskAuthorization` – Access control for tasks
+* `TaskAuthorizationService` – Task-specific authorization
+
+---
+
+### ⚙️ Configuration
+
+* `JwtFilter` – JWT request validation
+
+* `JwtUtil` – Token generation & validation
+
+* `RateLimitFilter` – API rate limiting
+
+* `RedisConfig` – Redis setup
+
+* `SecurityConfig` – Security configuration
+
+* `SecurityUtils` – Utility methods
+
+* `SwaggerConfig` – API documentation setup
+
+* `WebConfig` – Web-related configurations
+
+---
+
+### 🎮 Controllers
+
+* `AuthController` – Authentication APIs
+* `UserController` – User management APIs
+* `TaskController` – Task operations
+* `TaskCommentController` – Comment operations
+
+---
+
+### 📦 DTOs
+
+#### Request
+
+* `AuthRequest`
+* `TaskRequestDto`
+* `TaskCommentRequest`
+* `UserRequestDto`
+
+#### Response
+
+* `AuthResponse`
+* `PageResponse`
+* `TaskResponseDto`
+* `TaskCommentResponseDto`
+* `UserResponseDto`
+
+---
+
+### 🗄️ Entities (Database Tables)
+
+* `UserEntity` → **users**
+* `RoleEntity` → **roles**
+* `TaskEntity` → **tasks**
+* `TaskCommentEntity` → **task_comments**
+
+---
+
+### 🔢 Enums
+
+* `Priority`
+* `Status`
+* `Visibility`
+
+---
+
+### ⚠️ Exception Handling
+
+* `GlobalExceptionHandler` – Centralized error handling
+* `ResourceNotFoundException`
+* `AccessDeniedException`
+
+---
+
+### 🔄 Mappers
+
+* `UserMapper`
+* `TaskMapper`
+* `TaskCommentMapper`
+
+---
+
+### ⚡ Rate Limiting
+
+* `RateLimitService` – Handles request throttling using Redis
+
+---
+
+### 🗃️ Repositories
+
+* `UserRepo`
+* `RoleRepo`
+* `TaskRepo`
+* `TaskCommentRepo`
+
+---
+
+### 🧠 Services
+
+* `UserService`
+* `TaskService`
+* `TaskCommentService`
+* `CustomUserDetailsService`
+
+---
+
+### 🔍 Specifications
+
+* `TaskSpecification` – Dynamic filtering logic
+
+---
+
+## 🗃️ Database Schema Overview
+
+### 👤 Users Table
+
+| Column   | Description          |
+| -------- | -------------------- |
+| id       | Primary key          |
+| username | Unique username      |
+| email    | User email           |
+| password | Encrypted password   |
+| role_id  | Foreign key to roles |
+
+### 🛡️ Roles Table
+
+| Column | Description             |
+| ------ | ----------------------- |
+| id     | Primary key             |
+| name   | Role name (ADMIN, USER) |
+
+### ✅ Tasks Table
+
+| Column      | Description                    |
+| ----------- | ------------------------------ |
+| id          | Primary key                    |
+| title       | Task title                     |
+| description | Task details                   |
+| priority    | Enum (LOW, MEDIUM, HIGH)       |
+| status      | Enum (TODO, IN_PROGRESS, DONE) |
+| visibility  | Enum (PUBLIC, PRIVATE)         |
+| user_id     | Owner of task                  |
+
+### 💬 Task Comments Table
+
+| Column  | Description    |
+| ------- | -------------- |
+| id      | Primary key    |
+| content | Comment text   |
+| task_id | Related task   |
+| user_id | Comment author |
+
+---
+
+## 📌 Key Highlights
+
+* Clean Architecture & Layered Design
+* Secure API using Spring Security & JWT
+* Redis-powered caching & rate limiting
+* Scalable filtering with JPA Specifications
+* Production-ready coding practices
+
+---
+
+## 📖 API Documentation
+
+After running the application, access Swagger UI:
+
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
+---
+
+## 🐳 Run with Docker
 
 ```bash
-SecureTaskManagement
-│
-├── src/main/java/com/securetaskmanagement
-│
-│   ├── config/                # Security & application configs
-│   │       SecurityConfig.java
-│   │       JwtFilter.java
-│   │       JwtService.java
-│
-│   ├── controller/            # REST Controllers
-│   │       AuthController.java
-│   │       TaskController.java
-│   │       CommentController.java
-│
-│   ├── service/               # Business logic interfaces
-│   │       AuthService.java
-│   │       TaskService.java
-│   │       CommentService.java
-│
-│   ├── service/impl/          # Service implementations
-│
-│   ├── repository/            # Data access layer
-│   │       UserRepository.java
-│   │       TaskRepository.java
-│   │       CommentRepository.java
-│   │       RoleRepository.java
-│
-│   ├── entity/                # JPA entities
-│   │       User.java
-│   │       Role.java
-│   │       Task.java
-│       TaskComment.java
-│       AuditLog.java
-│
-│   ├── dto/                   # Request & Response DTOs
-│       TaskRequest.java
-│       TaskResponse.java
-│       AuthRequest.java
-│       AuthResponse.java
-│
-│   ├── mapper/                # MapStruct mappers
-│
-│   ├── authorization/         # Custom authorization logic
-│
-│   ├── exception/             # Global exception handling
-│       GlobalExceptionHandler.java
-│
-│   ├── util/                  # Utility classes
-│
-│   └── SecureTaskManagementApplication.java
-│
-└── src/main/resources
-        application.properties
+docker-compose up --build
 ```
 
 ---
 
-## 🗄 Database Schema
+## 👨‍💻 Author
 
-### USERS
-
-| Column     | Type      |
-| ---------- | --------- |
-| id         | BIGINT    |
-| username   | VARCHAR   |
-| email      | VARCHAR   |
-| password   | VARCHAR   |
-| role_id    | BIGINT    |
-| created_at | TIMESTAMP |
+**Samoon Haider**
 
 ---
 
-### ROLES
+## 📁 Folder Structure
 
-| Column    | Type    |
-| --------- | ------- |
-| id        | BIGINT  |
-| role_name | VARCHAR |
+Below is the high-level structure of the project:
 
-**Example Roles:**
+## 📁 Folder Structure
 
-* ADMIN
-* MANAGER
-* USER
-
----
-
-### TASKS
-
-| Column      | Type      |
-| ----------- | --------- |
-| id          | BIGINT    |
-| title       | VARCHAR   |
-| description | TEXT      |
-| priority    | VARCHAR   |
-| status      | VARCHAR   |
-| visibility  | VARCHAR   |
-| due_date    | TIMESTAMP |
-| created_by  | BIGINT    |
-| assigned_to | BIGINT    |
-| created_at  | TIMESTAMP |
-| updated_at  | TIMESTAMP |
-| deleted     | BOOLEAN   |
-
----
-
-### TASK_COMMENTS
-
-| Column     | Type      |
-| ---------- | --------- |
-| id         | BIGINT    |
-| task_id    | BIGINT    |
-| user_id    | BIGINT    |
-| comment    | TEXT      |
-| created_at | TIMESTAMP |
-
----
-
-### AUDIT_LOGS
-
-| Column      | Type      |
-| ----------- | --------- |
-| id          | BIGINT    |
-| user_id     | BIGINT    |
-| action      | VARCHAR   |
-| entity_type | VARCHAR   |
-| entity_id   | BIGINT    |
-| timestamp   | TIMESTAMP |
-
----
-
-## 🔗 API Endpoints
-
-### 🔐 Authentication
-
-#### Register User
-
-```http
-POST /api/auth/register
+```
+src/main/java/com/haider/SecureTaskManagement
+│
+├── authorization
+│   ├── AuthorizationService
+│   ├── CommentAuthorization
+│   ├── TaskAuthorization
+│   └── TaskAuthorizationService
+│
+├── config
+│   ├── JwtFilter
+│   ├── JwtUtil
+│   ├── RateLimitFilter
+│   ├── RedisConfig
+│   ├── SecurityConfig
+│   ├── SecurityUtils
+│   ├── SwaggerConfig
+│   └── WebConfig
+│
+├── controller
+│   ├── AuthController
+│   ├── TaskController
+│   ├── TaskCommentController
+│   └── UserController
+│
+├── dto
+│   ├── request
+│   │   ├── AuthRequest
+│   │   ├── TaskRequestDto
+│   │   ├── TaskCommentRequest
+│   │   └── UserRequestDto
+│   │
+│   └── response
+│       ├── AuthResponse
+│       ├── PageResponse
+│       ├── TaskResponseDto
+│       ├── TaskCommentResponseDto
+│       └── UserResponseDto
+│
+├── entity
+│   ├── UserEntity
+│   ├── RoleEntity
+│   ├── TaskEntity
+│   └── TaskCommentEntity
+│
+├── enums
+│   ├── Priority
+│   ├── Status
+│   └── Visibility
+│
+├── exception
+│   ├── GlobalExceptionHandler
+│   ├── ResourceNotFoundException
+│   └── AccessDeniedException
+│
+├── mapper
+│   ├── UserMapper
+│   ├── TaskMapper
+│   └── TaskCommentMapper
+│
+├── rateLimit
+│   └── RateLimitService
+│
+├── repo
+│   ├── UserRepo
+│   ├── RoleRepo
+│   ├── TaskRepo
+│   └── TaskCommentRepo
+│
+├── service
+│   ├── UserService
+│   ├── TaskService
+│   ├── TaskCommentService
+│   └── CustomUserDetailsService
+│
+└── specification
+    └── TaskSpecification
 ```
 
-**Request**
 
-```json
-{
-  "username": "john",
-  "email": "john@example.com",
-  "password": "password"
-}
-```
+## ⭐ Show Your Support
 
----
-
-#### Login
-
-```http
-POST /api/auth/login
-```
-
-**Request**
-
-```json
-{
-  "username": "john",
-  "password": "password"
-}
-```
-
-**Response**
-
-```json
-{
-  "token": "JWT_TOKEN"
-}
-```
-
----
-
-## 📌 Task APIs
-
-* **Create Task** → `POST /api/tasks`
-* **Get All Tasks** → `GET /api/tasks`
-* **Get Task By ID** → `GET /api/tasks/{id}`
-* **Update Task** → `PUT /api/tasks/{id}`
-* **Delete Task (Soft Delete)** → `DELETE /api/tasks/{id}`
-* **Assign Task** → `POST /api/tasks/{taskId}/assign/{userId}`
-
----
-
-## 💬 Comment APIs
-
-* **Add Comment** → `POST /api/tasks/{taskId}/comments`
-* **Get Task Comments** → `GET /api/tasks/{taskId}/comments`
-
----
-
-## 🔐 Security
-
-This project uses **Spring Security with JWT authentication**.
-
-### Security Features:
-
-* Stateless Authentication
-* Role-Based Authorization
-* Method-Level Security (`@PreAuthorize`)
-* Protected REST APIs
-
-**Example:**
-
-```java
-@PreAuthorize("hasRole('ADMIN')")
-```
-
----
-
-## 📊 Future Improvements
-
-* Task file attachments
-* Email notifications
-* WebSocket real-time updates
-* Pagination & advanced filtering
-* Task analytics dashboard
-
----
-
-## 🎯 Learning Goals
-
-This project demonstrates:
-
-* Spring Security & JWT Authentication
-* REST API Design
-* Database relationships (JPA/Hibernate)
-* Secure backend architecture
-* Role-based authorization
-* Clean layered architecture
-
----
-
-## 📄 License
-
-This project is created for **learning and portfolio purposes**.
-
----
-
-## ⭐ Why This Project Stands Out
-
-* Implements **real-world authorization logic (not just CRUD)**
-* Clean and scalable backend architecture
-* Strong focus on **security and validation**
-* Demonstrates **industry-relevant backend practices**
+If you found this project helpful, consider giving it a ⭐ on GitHub!
