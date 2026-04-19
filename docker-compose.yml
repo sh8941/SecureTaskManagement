@@ -1,0 +1,47 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8090:8080"
+    networks:
+      - STM-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started   # Redis starts fast, no need for healthcheck
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 8941
+      MYSQL_DATABASE: SECURE_TASK_DB
+    ports:
+      - "3307:3306"
+    networks:
+      - STM-network
+    healthcheck:
+      test: ["CMD","mysqladmin","ping","-h","localhost"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    volumes:
+      - mysql_db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  redis:
+    image: redis:7.2
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - STM-network
+    volumes:
+      - redis_data:/data   # optional but recommended (persistence)
+
+networks:
+  STM-network:
+    driver: bridge
+
+volumes:
+  mysql_db_data:
+  redis_data:
