@@ -26,6 +26,7 @@ public class SwaggerConfig {
                 new Info().title("Secure Task Management")
                         .description("created by Samoon Haider")
         )
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new Components().addSecuritySchemes(
                         "bearerAuth", new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)

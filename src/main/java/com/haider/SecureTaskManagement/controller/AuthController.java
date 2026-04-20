@@ -7,6 +7,7 @@ import com.haider.SecureTaskManagement.dto.response.AuthResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class AuthController {
     @Autowired
     private SecurityUtils securityUtils;
 
-    @Operation(summary = "Get JWT token for call API")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Token generated"),
             @ApiResponse(responseCode = "404", description = "User not found")
